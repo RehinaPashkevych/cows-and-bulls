@@ -1,0 +1,23 @@
+Bulls: 1, Time: 0:00:10.350627
+Bulls: 0, Time: 0:00:09.314021
+Bulls: 1, Time: 0:00:11.801324
+Username: Your Username, Bulls: 2, Time: 0:00:18.361435
+Username: Your Username, Bulls: 0, Time: 0:00:11.137687
+Username: Your Username, Bulls: 0, Time: 0:00:10.893061
+Username: Your Username, Bulls: 0, Time: 0:00:10.321631
+Username: Your Username, Bulls: 1, Time: 0:00:11.653995
+Username: h, Bulls: 0, Time: 0:00:37.221409
+Username: Your Username, Bulls: 0, Time: 0:00:13.012062
+Username: Your Username, Bulls: 1, Time: 0:00:13.438278
+Username: Your Usernfgame, Bulls: 0, Time: 0:00:12.212591
+Username: hn, Bulls: 0, Time: 0:00:13.976589
+Username: v, Bulls: 0, Time: 0:01:17.629097
+Username: , Bulls: 0, Time: 0:00:22.921460
+Username: jnb, Bulls: 0, Time: 0:00:12.030642
+Username: , Bulls: 0, Time: 0:00:11.910361
+Username: , Bulls: 0, Time: 0:00:11.775388
+Username: ki, Bulls: 0, Time: 0:00:10.787863
+Username: ki, Bulls: 1, Time: 0:00:08.592967
+Username: Rina, Bulls: 0, Time: 0:00:18.261540
+Username: Rina, Bulls: 2, Time: 0:00:21.555294
+Username: dfkm, Bulls: 1, Time: 0:00:14.940217

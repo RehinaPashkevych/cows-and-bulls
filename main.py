@@ -1,5 +1,6 @@
 import os
 import time
+from datetime import datetime
 from random import randint
 from tkinter import *
 from tkinter import ttk, font
@@ -32,6 +33,7 @@ pygame.mixer.init()
 canvas_win = None
 canvas_text_score = None
 error_label = None
+start_game_time = None
 win_sound = None
 
 is_on_win_screen = False
@@ -40,6 +42,7 @@ is_game_paused = False
 errmsg = StringVar()
 winsmsg = StringVar()
 lossesmsg = StringVar()
+username_var = StringVar()
 
 paused_time = 0
 
@@ -59,11 +62,28 @@ def open_help():
 def exit_app():
     root.quit()
 
+def get_last_username():
+    try:
+        with open("records.txt", "r") as records_file:
+            lines = records_file.readlines()
+            if lines:
+                last_line = lines[-1].strip()
+                parts = last_line.split(", ")
+                for part in parts:
+                    if part.startswith("Username: "):
+                        return part.replace("Username: ", "")
+    except FileNotFoundError:
+        pass
+    return "Cool Name"
+
+# Set the initial current_username
+
 
 def create_main_screen():
     global entry_vars, entry_fields, main_screen_objects, canvas_bull, \
         image_bull, canvas_cow, image_cow, error_label, win_sound, \
-        happy_girl_sound, is_game_paused, paused_time, start_time, pause_button, timer_label
+        happy_girl_sound, is_game_paused, paused_time, start_time, pause_button, timer_label, \
+        start_game_time, current_username, username_var
 
     win_sound = pygame.mixer.Sound("materials/audio/win.mp3")
     happy_girl_sound = pygame.mixer.Sound("materials/audio/happy-girl.mp3")
@@ -79,6 +99,8 @@ def create_main_screen():
     # Initialize the timer_id variable
     timer_id = None
     start_time = time.time()
+    start_game_time = datetime.now()  # Store the game start time
+    current_username = get_last_username()
 
     for i in range(4):
         # ENTRIES ------------------------------
@@ -93,6 +115,28 @@ def create_main_screen():
         entry_fields.append(entry_var)
         main_screen_objects.append(entry_var)
 
+    def update_username(event=None):
+        global current_username
+        new_username = username_entry.get()
+        current_username = new_username
+        username_label.config(text=f"Your username: {current_username}")
+        username_label.place(x=100, y=0)
+        username_entry.place_forget()
+
+    def switch_to_entry(event):
+        username_label.place_forget()
+        username_entry.place(x=100, y=0)
+        username_entry.focus_set()
+
+    username_label = Label(root, foreground="black", text=f"Your username: {current_username}", font=font_label_10,
+                           background="white", borderwidth=2, relief="ridge", )
+    username_label.place(x=100, y=0)
+    username_label.bind("<Button-1>", switch_to_entry)
+
+    username_entry = Entry(root, font=font_label_10, width=15)
+    username_entry.bind('<Return>', update_username)
+    username_entry.bind("<FocusOut>", update_username)
+
     # BUTTONS --------------------------------------------------------
 
     restart_button = Button(text="Restart", command=restart_game, background="lightskyblue")
@@ -105,8 +149,19 @@ def create_main_screen():
             is_game_paused = False
             pause_button.config(text="Pause")
             start_time = time.time() - paused_time
-            for entry_field in entry_fields:
-                entry_field.config(state="normal")
+
+            for i in range(4):
+                # checking the entries after pause to freeze needed
+                entry_value = entry_fields[i].get()
+                if entry_value.isdigit():  # Check if it's a valid integer string
+                    entry_value = int(entry_value)
+                    if entry_value == random_values[i]:
+                        entry_fields[i].config(state="readonly")
+                    else:
+                        entry_fields[i].config(state="normal")
+                else:
+                    entry_fields[i].config(state="normal")
+
             # Update the timer immediately
             update_timer()
         else:
@@ -164,8 +219,8 @@ def create_main_screen():
     timer_label.place(x=293, y=0)
     main_screen_objects.append(timer_label)
 
-
     update_timer()
+
 
 def update_timer():
     global start_time, timer_label, timer_id
@@ -176,30 +231,37 @@ def update_timer():
         # Continue updating the timer
         timer_id = root.after(1000, update_timer)
 
-def restart_game():
-    global num_wins, num_losses, random_values, start_time, current_time, paused_time, is_game_paused, pause_button
 
-    pygame.mixer.music.stop()  # Stop any currently playing music
+def restart_game():
+    global num_wins, num_losses, random_values, start_time, current_time, \
+        paused_time, is_game_paused, pause_button, is_on_win_screen, win_sound, \
+        start_game_time, current_username, username_var
+
+    win_sound.stop()
 
     num_wins = 0
     num_losses = 0
     current_time = 0
     paused_time = 0
     start_time = time.time()
+    start_game_time = datetime.now()  # Update the game start time
     random_values = [randint(0, 9) for _ in range(4)]
+    print(random_values)
 
     # Clear the entry fields
     for entry_field in entry_fields:
-        entry_field.delete(0, "end")
         entry_field.config(state="normal")
+        entry_field.delete(0, "end")
 
     # Reset labels
     winsmsg.set("Cows: 0")
     lossesmsg.set("Bulls: 0")
     errmsg.set("")
 
-
     if is_on_win_screen:
+        canvas_win.place_forget()
+        canvas_text_score.place_forget()
+        is_on_win_screen = False
         create_main_screen()
     if is_game_paused:
         is_game_paused = False
@@ -275,7 +337,16 @@ def display_image_sequence(window, image_folder):
 
 
 def show_win_screen():
-    global restart_button, canvas_win, is_on_win_screen, canvas_text_score, win_sound
+    global restart_button, canvas_win, is_on_win_screen, canvas_text_score, win_sound, \
+        start_game_time, current_username
+
+    end_time = datetime.now()  # Store the game end time
+    elapsed_time = end_time - start_game_time  # Calculate the elapsed time
+
+    # Write game results (number of bulls and time) to the "records.txt" file
+    with open("records.txt", "a") as records_file:
+        records_file.write(f"Username: {current_username}, Bulls: {num_losses}, Time: {elapsed_time}\n")
+
     is_on_win_screen = True
 
     win_sound.play()
