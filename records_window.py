@@ -2,8 +2,12 @@ import tkinter as tk
 from tkinter import ttk
 import re
 
-def display_records_window():
 
+def display_records_window():
+    """
+    This code provides a user-friendly way to display game records, including the best record,
+    in a separate window with customizable column widths and alternating row colors for improved readability.
+    """
     def resize_columns(event):
         # Get the current window width
         window_width = event.width
@@ -47,23 +51,27 @@ def display_records_window():
             records = [line.split(", ") for line in records_data.strip().split('\n')]
 
             for i, record in enumerate(records):
-                username = record[0].split(": ")[1]
-                bulls_match = re.search(r'Bulls: (\d+)', record[1])
-                time_match = re.search(r'Time: (\d+:\d+:\d+(?:\.\d+)?)', record[2])
-                date_match = re.search(r'Date: (\d+\.\d+\.\d+)', record[3]) if len(record) > 3 else None  # Extract the date
+                if len(record) >= 4:  # Make sure there are at least 4 elements in the record
+                    username = record[0].split(": ")[1]
+                    bulls_match = re.search(r'Bulls: (\d+)', record[1])
+                    time_match = re.search(r'Time: (\d+:\d+:\d+(?:\.\d+)?)', record[2])
+                    date_match = re.search(r'Date: (\d+\.\d+\.\d+)', record[3]) if len(
+                        record) > 3 else None  # Extract the date
 
-                if username and bulls_match and time_match:
-                    bulls = bulls_match.group(1)
-                    time_str = time_match.group(1)
-                    date_str = date_match.group(1) if date_match else ""  # Check if date_match is not None
+                    if username and bulls_match and time_match:
+                        bulls = bulls_match.group(1)
+                        time_str = time_match.group(1)
+                        date_str = date_match.group(1) if date_match else ""  # Check if date_match is not None
 
-                    if i % 2 == 0:
-                        records_tree.insert("", "end", values=(username, int(bulls), time_str, date_str), tags=("even_row",))
-                    else:
-                        records_tree.insert("", "end", values=(username, int(bulls), time_str, date_str), tags=("odd_row",))
+                        if i % 2 == 0:
+                            records_tree.insert("", "end", values=(username, int(bulls), time_str, date_str),
+                                                tags=("even_row",))
+                        else:
+                            records_tree.insert("", "end", values=(username, int(bulls), time_str, date_str),
+                                                tags=("odd_row",))
 
-                    if best_result is None or (int(bulls) <= best_result[1] and (time_str < best_result[2])):
-                        best_result = (username, int(bulls), time_str, date_str)
+                        if best_result is None or (int(bulls) <= best_result[1] and (time_str < best_result[2])):
+                            best_result = (username, int(bulls), time_str, date_str)
 
             if best_result:
                 # Display the best record in the best frame
@@ -79,8 +87,5 @@ def display_records_window():
         records_tree.insert("", "end", values=("No records found", "", "", ""))
 
 
-
-
 if __name__ == "__main__":
     display_records_window()
-

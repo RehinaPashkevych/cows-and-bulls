@@ -5,6 +5,7 @@
     "menu_exit": "Wyjście",
     "menu_settings_music": "Muzyka",
     "menu_settings_music_checkbox": "Włącz Muzykę",
+    "menu_settings_sound_checkbox": "Włącz Dźwięk",
     "menu_settings_sound_style": "Styl Dźwięku:",
     "menu_settings_language": "Język:",
     "menu_settings_save": "Zapisz",
@@ -16,11 +17,11 @@
     "message_correct_guess": "Poprawna odpowiedź",
     "message_not_a_match": "To nie pasuje, próbuj dalej",
     "message_enter_single_digit": "Proszę wprowadzić pojedynczą cyfrę",
-    "message_enter_valid_integer": "Proszę wprowadzić prawidłową liczbę całkowitą",
+    "message_enter_valid_integer": "Proszę wprowadzić prawidłową liczbę \n całkowitą",
     "message_enter_between": "Proszę wprowadzić liczbę między 0 a 9",
     "message_game_paused": "Gra jest wstrzymana",
     "message_game_rules": "Zasady gry:\n1. Celem gry jest odgadnięcie 4-cyfrowej liczby.\n2. Każda cyfra w liczbie mieści się w zakresie od 0 do 9.\n3. Musisz wprowadzić swoje próby w pola wejściowe.\n4. Po złożeniu próby otrzymasz informację zwrotną.\n5. Jeśli cyfra jest na właściwym miejscu, dostajesz 'Krowę'.\n6. Jeśli cyfra jest w liczbie, ale na niewłaściwym miejscu, dostajesz 'Byka'.\n7. Staraj się odgadnąć liczbę przy jak najmniejszej liczbie prób.\n8. Wygrywasz grę, gdy odgadniesz właściwą liczbę.\n\nPowodzenia i baw się dobrze!",
     "message_license": "Licencja:\nTa gra jest udostępniana na podstawie Licencji XYZ. Masz prawo używać, modyfikować i rozpowszechniać to oprogramowanie, pod warunkiem przestrzegania postanowień Licencji XYZ. \n\nAby uzyskać więcej informacji, zapoznaj się z plikiem LICENSE.txt dołączonym do gry.",
-    "message_you_win": "Wygrałeś/Wygrałaś!",
+    "message_you_win": "Sukces!",
     "message_your_score": "Twój Wynik: "
 }

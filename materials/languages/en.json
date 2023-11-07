@@ -5,6 +5,7 @@
     "menu_exit": "Exit",
     "menu_settings_music": "Music",
     "menu_settings_music_checkbox": "Enable Music",
+    "menu_settings_sound_checkbox": "Enable Sound",
     "menu_settings_sound_style" : "Sound Style:",
     "menu_settings_language": "Language:",
     "menu_settings_save": "Save",

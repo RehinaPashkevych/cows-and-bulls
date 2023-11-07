@@ -1,2 +1,13 @@
-Username: Rina, Bulls: 1, Time: 0:00:15.721860, Date: 07.11.2023
-Username: Rina, Bulls: 0, Time: 0:00:46.384764, Date: 07.11.2023
+
+Username: Regina, Bulls: 2, Time: 0:00:27.125280, Date: 07.11.2023
+Username: Regina, Bulls: 0, Time: 0:00:08.683050, Date: 07.11.2023
+Username: Regina, Bulls: 2, Time: 0:00:15.943542, Date: 07.11.2023
+Username: Regina, Bulls: 4, Time: 0:00:21.232159, Date: 07.11.2023
+Username: Regina, Bulls: 1, Time: 0:00:11.328235, Date: 07.11.2023
+Username: Regina, Bulls: 1, Time: 0:00:10.124351, Date: 07.11.2023
+Username: Regina, Bulls: 2, Time: 0:00:10.771880, Date: 07.11.2023
+Username: b, Bulls: 1, Time: 0:00:11.135199, Date: 07.11.2023
+Username: b, Bulls: 1, Time: 0:00:21.875614, Date: 07.11.2023
+Username: b, Bulls: 0, Time: 0:00:16.563376, Date: 07.11.2023
+Username: fhgj, Bulls: 0, Time: 0:00:09.456784, Date: 07.11.2023
+Username: hjjhjlcdt, Bulls: 0, Time: 0:00:31.246527, Date: 07.11.2023
