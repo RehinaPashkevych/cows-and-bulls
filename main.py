@@ -5,8 +5,10 @@ from random import randint
 from tkinter import *
 from tkinter import ttk, font
 from PIL import Image, ImageTk
-import pygame  # Import pygame
+import pygame
 from tkdnd import TkinterDnD
+from records_window import display_records_window  # Import the function
+import json
 
 PHOTO_SCALE = 60
 SCREEN_WIDTH = 400
@@ -46,21 +48,169 @@ username_var = StringVar()
 
 paused_time = 0
 
+menu_records = None
+menu_settings = None
+menu_help = None
+menu_exit = None
+prompt_username = None
+restart_button_text = None
+pause_button_text = None
+resume_button_text = None
+label_time = None
+message_correct_guess = None
+message_not_a_match = None
+message_enter_single_digit = None
+message_enter_valid_integer = None
+message_game_paused = None
+message_game_rules = None
+message_license = None
+menu_settings_music = None
+menu_settings_music_checkbox = None
+menu_settings_sound_style = None
+menu_settings_language = None
+menu_settings_save = None
+message_enter_between = None
+message_you_win = None
+message_your_score = None
 
-def open_records():
-    pass  # Add your action here
+language_files = {
+    "English": "en.json",
+    "Polish": "pl.json",
+    "Ukrainian": "ua.json",
+    "Spanish": "es.json",
+}
+
+selected_language = "English"
 
 
-def open_settings():
-    pass  # Add your action here
+def extract_translation_variables(translations):
+    for key, value in translations.items():
+        globals()[key] = value
+
+
+def load_translations(language_file):
+    try:
+        with open(f'materials/languages/{language_file}', 'r', encoding='utf-8') as json_file:
+            translations = json.load(json_file)
+            return translations
+    except FileNotFoundError:
+        return {}  # Return an empty dictionary if the language file doesn't exist
 
 
 def open_help():
-    pass  # Add your action here
+    # Create a new Toplevel window for the help
+    help_window = Toplevel()
+    help_window.title("Game Rules and License")
+
+    # Configure the style for the help window
+    help_style = ttk.Style()
+    help_style.configure("Help.TLabel", foreground="black", background="white", font=("Arial", 14))
+    help_style.configure("License.TLabel", foreground="black", background="white", font=("Arial", 12))
+
+    # Create a label with the game rules and apply a different font and style
+    rules_text = message_game_rules
+
+    help_label = ttk.Label(help_window, text=rules_text, style="Help.TLabel")
+    help_label.pack(padx=10, pady=10)
+
+    # Add a "License" section with license information
+    license_text = message_license
+
+    license_label = ttk.Label(help_window, text=license_text, style="License.TLabel")
+    license_label.pack(padx=2, pady=5)
+
+    # Center the help window on the screen
+    help_window.geometry("+{}+{}".format(
+        root.winfo_x() + (root.winfo_width() // 2 - help_window.winfo_reqwidth() // 2),
+        root.winfo_y() + (root.winfo_height() // 2 - help_window.winfo_reqheight() // 2)
+    ))
+
+
+def open_records():
+    display_records_window()
+
+
+def update_language(language):
+    global  selected_language
+
+    if language in language_files:
+        selected_language = language
+        language_file = language_files[language]
+        translations = load_translations(language_file)
+        extract_translation_variables(translations)
+        print(language_file)
+    else:
+        print(f"Language '{language}' is not supported.")
+
+
+update_language(selected_language)
+
+
+def save_settings():
+    global music_enabled_var, sound_style_var, language_var, selected_language, settings_window
+
+    # Save the selected settings to a file or apply them in your application
+    music_enabled = music_enabled_var.get()
+    sound_style = sound_style_var.get()
+    selected_language = language_var.get()
+    # Update the language based on the user's choice
+    update_language(selected_language)
+    update_ui_language()
+    settings_window.destroy()
+
+
+def open_settings():
+    global music_enabled_var, sound_style_var, language_var, selected_language, settings_window
+    settings_window = Toplevel()
+    settings_window.title(menu_settings)
+
+    music_enabled_label = Label(settings_window, text=menu_settings_music, font=("Arial", 12))
+    music_enabled_label.grid(row=0, column=0, padx=10, pady=5)
+
+    music_enabled_var = IntVar()
+    music_checkbox = Checkbutton(settings_window, text=menu_settings_music_checkbox, variable=music_enabled_var,
+                                 font=("Arial", 12))
+    music_checkbox.grid(row=0, column=1)
+
+    sound_style_label = Label(settings_window, text=menu_settings_sound_style, font=("Arial", 12))
+    sound_style_label.grid(row=1, column=0, padx=10, pady=5)
+
+    sound_style_var = StringVar()
+    sound_style_combobox = ttk.Combobox(settings_window, textvariable=sound_style_var,
+                                        values=["Style 1", "Style 2", "Style 3"], font=("Arial", 12))
+    sound_style_combobox.grid(row=1, column=1)
+
+    language_label = Label(settings_window, text=menu_settings_language, font=("Arial", 12))
+    language_label.grid(row=2, column=0, padx=10, pady=5)
+
+    language_var = StringVar()
+    language_combobox = ttk.Combobox(
+        settings_window, textvariable=language_var, values=list(language_files.keys()), font=("Arial", 12)
+    )
+    language_combobox.grid(row=2, column=1)
+
+    language_var.set(selected_language)
+    #language_combobox.bind("<<ComboboxSelected>>", update_ui_language)
+
+
+    save_button = Button(settings_window, text=menu_settings_save, command=save_settings, font=("Arial", 12))
+    save_button.grid(row=3, columnspan=2, pady=10)
+
+
+def update_ui_language():
+    global main_menu
+    username_label.config(text=f"{prompt_username}: {current_username}")
+    restart_button.config(text=restart_button_text)
+    pause_button.config(text=pause_button_text)
+    main_menu.entryconfig(1, label=menu_records, command=open_records)
+    main_menu.entryconfig(2, label=menu_settings, command=open_settings)
+    main_menu.entryconfig(3, label=menu_help, command=open_help)
+    main_menu.entryconfig(4, label=menu_exit, command=exit_app)
 
 
 def exit_app():
     root.quit()
+
 
 def get_last_username():
     try:
@@ -76,6 +226,7 @@ def get_last_username():
         pass
     return "Cool Name"
 
+
 # Set the initial current_username
 
 
@@ -83,7 +234,7 @@ def create_main_screen():
     global entry_vars, entry_fields, main_screen_objects, canvas_bull, \
         image_bull, canvas_cow, image_cow, error_label, win_sound, \
         happy_girl_sound, is_game_paused, paused_time, start_time, pause_button, timer_label, \
-        start_game_time, current_username, username_var
+        start_game_time, current_username, username_var, restart_button, pause_button_text, username_label, restart_button_text
 
     win_sound = pygame.mixer.Sound("materials/audio/win.mp3")
     happy_girl_sound = pygame.mixer.Sound("materials/audio/happy-girl.mp3")
@@ -116,19 +267,20 @@ def create_main_screen():
         main_screen_objects.append(entry_var)
 
     def update_username(event=None):
-        global current_username
+        global current_username, username_label
         new_username = username_entry.get()
         current_username = new_username
-        username_label.config(text=f"Your username: {current_username}")
+        username_label.config(text=f"{prompt_username}: {current_username}")
         username_label.place(x=100, y=0)
         username_entry.place_forget()
 
     def switch_to_entry(event):
+        global username_label
         username_label.place_forget()
         username_entry.place(x=100, y=0)
         username_entry.focus_set()
 
-    username_label = Label(root, foreground="black", text=f"Your username: {current_username}", font=font_label_10,
+    username_label = Label(root, foreground="black", text=f"{prompt_username}: {current_username}", font=font_label_10,
                            background="white", borderwidth=2, relief="ridge", )
     username_label.place(x=100, y=0)
     username_label.bind("<Button-1>", switch_to_entry)
@@ -139,15 +291,15 @@ def create_main_screen():
 
     # BUTTONS --------------------------------------------------------
 
-    restart_button = Button(text="Restart", command=restart_game, background="lightskyblue")
+    restart_button = Button(text=restart_button_text, command=restart_game, background="lightskyblue")
     restart_button.place(x=SCREEN_WIDTH / 2, y=SCREEN_HEIGHT - 40)
 
     def toggle_pause():
-        global is_game_paused, start_time, paused_time, pause_button
+        global is_game_paused, start_time, paused_time, pause_button, pause_button_text, resume_button
         if is_game_paused:
             # Resume the game timer
             is_game_paused = False
-            pause_button.config(text="Pause")
+            pause_button.config(text=pause_button_text)
             start_time = time.time() - paused_time
 
             for i in range(4):
@@ -165,7 +317,7 @@ def create_main_screen():
             # Update the timer immediately
             update_timer()
         else:
-            pause_button.config(text="Resume")
+            pause_button.config(text=resume_button_text)
             is_game_paused = True
             paused_time = time.time() - start_time
             for entry_field in entry_fields:
@@ -173,7 +325,7 @@ def create_main_screen():
             if timer_id is not None:
                 root.after_cancel(timer_id)
 
-    pause_button = Button(text="Pause", command=toggle_pause, background="lightcoral")
+    pause_button = Button(text=pause_button_text, command=toggle_pause, background="lightcoral")
     pause_button.place(x=SCREEN_WIDTH / 2 - 70, y=SCREEN_HEIGHT - 40)
     main_screen_objects.append(pause_button)
 
@@ -227,7 +379,7 @@ def update_timer():
     if not is_game_paused:
         current_time = time.time() - start_time
         minutes, seconds = divmod(int(current_time), 60)
-        timer_label.config(text=f"Time: {minutes}:{seconds:02}")
+        timer_label.config(text=f"{label_time}: {minutes}:{seconds:02}")
         # Continue updating the timer
         timer_id = root.after(1000, update_timer)
 
@@ -265,7 +417,7 @@ def restart_game():
         create_main_screen()
     if is_game_paused:
         is_game_paused = False
-        pause_button.config(text="Pause")
+        pause_button.config(text={pause_button})
         # Update the timer label to display "Time: 0:00"
     timer_label.config(text="Time: 0:00")
     # Update the timer immediately
@@ -336,16 +488,59 @@ def display_image_sequence(window, image_folder):
     update_label(0)
 
 
+def is_valid(new_val, entry_idx):
+    try:
+        global num_wins, num_losses, happy_girl_sound
+        new_val = new_val.replace(" ", "")
+        integer_value = int(new_val)
+        if is_game_paused:
+            # The game is paused, so don't allow guesses
+            errmsg.set("Game is paused.")
+        if 0 <= integer_value <= 9 and len(new_val) == 1:
+            if integer_value == random_values[int(entry_idx)]:
+                error_label.config(foreground="green")
+                entry_fields[int(entry_idx)].config(state="readonly")
+                errmsg.set(message_correct_guess)
+                num_wins += 1
+                winsmsg.set("Cows: " + str(num_wins))
+                enlarge_cow()
+                happy_girl_sound.play()
+                if num_wins == 4:
+                    show_win_screen()
+            else:
+                num_losses += 1
+                error_label.config(foreground="red")
+                errmsg.set(message_not_a_match)
+                lossesmsg.set("Bulls: " + str(num_losses))
+                enlarge_bull()
+        elif len(new_val) != 1:
+            # num_losses += 1
+            error_label.config(foreground="red")
+            errmsg.set(message_enter_single_digit)
+            lossesmsg.set("Bulls: " + str(num_losses))
+        else:
+            # num_losses += 1
+            error_label.config(foreground="red")
+            errmsg.set(message_enter_between)
+            lossesmsg.set("Bulls: " + str(num_losses))
+    except ValueError:
+        error_label.config(foreground="red")
+        errmsg.set(message_enter_valid_integer)
+    return True
+
+
 def show_win_screen():
     global restart_button, canvas_win, is_on_win_screen, canvas_text_score, win_sound, \
         start_game_time, current_username
 
     end_time = datetime.now()  # Store the game end time
     elapsed_time = end_time - start_game_time  # Calculate the elapsed time
+    formatted_end_time = end_time.strftime("%d.%m.%Y")  # Format the end time as "dd.mm.yyyy"
 
-    # Write game results (number of bulls and time) to the "records.txt" file
+    # Write game results (number of bulls, time, and date) to the "records.txt" file
     with open("records.txt", "a") as records_file:
-        records_file.write(f"Username: {current_username}, Bulls: {num_losses}, Time: {elapsed_time}\n")
+        records_file.write(
+            f"Username: {current_username}, Bulls: {num_losses}, Time: {elapsed_time}, Date: {formatted_end_time}\n")
 
     is_on_win_screen = True
 
@@ -361,59 +556,18 @@ def show_win_screen():
     canvas_win.place(x=0, y=0)
     display_image_sequence(canvas_win, "materials/cow-gif")
 
-    restart_button = Button(canvas_win, text="Restart", command=restart_game, background="lightskyblue")
+    restart_button = Button(canvas_win, text=restart_button_text, command=restart_game, background="lightskyblue")
     canvas_win.create_window(SCREEN_WIDTH // 2, SCREEN_HEIGHT - 40, window=restart_button)
 
     canvas_text_score = Canvas(bg="gray97", width=SCREEN_WIDTH - 30, height=SCREEN_HEIGHT / 4 - 50,
                                highlightthickness=0, relief='ridge')
     canvas_text_score.create_text(
         160, 40,  # Center the text
-        text=f"You Win!\nYour Score: Cows: {num_wins}, Bulls: {num_losses}",
+        text=f"{message_you_win}\n{message_your_score} Cows: {num_wins}, Bulls: {num_losses}",
         font=("Arial", 16),
         fill="black"
     )
     canvas_text_score.place(x=20, y=20)
-
-
-def is_valid(new_val, entry_idx):
-    try:
-        global num_wins, num_losses, happy_girl_sound
-        new_val = new_val.replace(" ", "")
-        integer_value = int(new_val)
-        if is_game_paused:
-            # The game is paused, so don't allow guesses
-            errmsg.set("Game is paused.")
-        if 0 <= integer_value <= 9 and len(new_val) == 1:
-            if integer_value == random_values[int(entry_idx)]:
-                error_label.config(foreground="green")
-                entry_fields[int(entry_idx)].config(state="readonly")
-                errmsg.set("Correct guess!")
-                num_wins += 1
-                winsmsg.set("Cows: " + str(num_wins))
-                enlarge_cow()
-                happy_girl_sound.play()
-                if num_wins == 4:
-                    show_win_screen()
-            else:
-                num_losses += 1
-                error_label.config(foreground="red")
-                errmsg.set("Not a match, keep trying.")
-                lossesmsg.set("Bulls: " + str(num_losses))
-                enlarge_bull()
-        elif len(new_val) != 1:
-            # num_losses += 1
-            error_label.config(foreground="red")
-            errmsg.set("Please enter a single digit.")
-            lossesmsg.set("Bulls: " + str(num_losses))
-        else:
-            # num_losses += 1
-            error_label.config(foreground="red")
-            errmsg.set("Please enter an integer between 0 and 9.")
-            lossesmsg.set("Bulls: " + str(num_losses))
-    except ValueError:
-        error_label.config(foreground="red")
-        errmsg.set("Please enter a valid integer.")
-    return True
 
 
 random_values = [randint(0, 9) for _ in range(4)]
@@ -423,11 +577,11 @@ print(random_values)
 main_menu = Menu(root)
 root.config(menu=main_menu)
 
-main_menu.add_command(label="Records", command=open_records)
-main_menu.add_command(label="Settings", command=open_settings)
-main_menu.add_command(label="Help", command=open_help)
-main_menu.add_separator()
-main_menu.add_command(label="Exit", command=exit_app)
+main_menu.add_command(label=menu_records, command=open_records)
+main_menu.add_command(label=menu_settings, command=open_settings)
+main_menu.add_command(label=menu_help, command=open_help)
+main_menu.add_command(label=menu_exit, command=exit_app)
+
 
 create_main_screen()
 
