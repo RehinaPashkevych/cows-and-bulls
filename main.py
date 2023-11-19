@@ -253,8 +253,10 @@ def update_ui_language():
     in the selected language. It ensures that the game's UI is presented in a way
     that is easily understandable to the player in their chosen language
     """
-    global main_menu, username_label, is_on_win_screen, canvas_text_score, elapsed_time_formatted
+    global main_menu, username_label, is_on_win_screen, canvas_text_score, elapsed_time_formatted, restart_button
     username_label.config(text=f"{prompt_username}: {current_username}")
+
+
     restart_button.config(text=restart_button_text)
     pause_button.config(text=pause_button_text)
     main_menu.entryconfig(1, label=menu_records, command=open_records)
@@ -270,7 +272,7 @@ def update_ui_language():
             font=("Arial", 13),
             fill="black"
         )
-        if not pygame.mixer.get_busy():
+        if pygame.mixer.get_busy():
             play_sound(win_sound, 1)
 
 
@@ -315,7 +317,10 @@ def create_main_screen():
     Returns:
         None
     """
-    global entry_vars, entry_fields, main_screen_objects, canvas_bull, image_bull, canvas_cow, image_cow, error_label, win_sound, is_game_paused, paused_time, start_time, pause_button, timer_label, start_game_time, current_username, username_var, restart_button, pause_button_text, username_label, restart_button_text
+    global entry_vars, entry_fields, main_screen_objects, canvas_bull,\
+        image_bull, canvas_cow, image_cow, error_label, win_sound, is_game_paused,\
+        paused_time, start_time, pause_button, timer_label, start_game_time, current_username,\
+        username_var, restart_button, pause_button_text, username_label, restart_button_text
 
     # Define fonts for text elements
     font1 = font.Font(family="Arial", size=20, weight="normal", slant="roman")
@@ -512,7 +517,8 @@ def restart_game():
      resets the game statistics (number of wins and losses), restarts the timer, generates new random values,
      clears the input fields, resets the labels, and hides the win screen if it was displayed.
      """
-    global num_wins, num_losses, random_values, start_time, paused_time, is_game_paused, win_sound, start_game_time
+    global num_wins, num_losses, random_values, start_time, paused_time, is_game_paused,\
+        win_sound, start_game_time, username_label, restart_button
 
     win_sound.stop()
 
@@ -536,6 +542,7 @@ def restart_game():
 
     if is_on_win_screen:
         hide_win_screen()
+        username_label.destroy()
         create_main_screen()
     if is_game_paused:
         is_game_paused = False
@@ -725,6 +732,7 @@ def show_win_screen():
                         relief='ridge')
     canvas_win.place(x=0, y=0)
     display_image_sequence(canvas_win, "materials/cow-gif")
+    restart_button.destroy()
 
     restart_button = Button(canvas_win, text=restart_button_text, command=restart_game, background="lightskyblue")
     canvas_win.create_window(SCREEN_WIDTH // 2, SCREEN_HEIGHT - 40, window=restart_button)
