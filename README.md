@@ -3,6 +3,10 @@
 ## Description
 Cows and Bulls is a number-guessing game implemented using the Tkinter library in Python. The objective of the game is to guess a randomly generated four-digit number. Each correct digit in the correct position is represented by a "Cow," while each correct digit in the wrong position is represented by a "Bull." The player continues guessing until all four digits are correctly placed.
 
+<img src="images/Screenshot_135.png" alt="app img" width="300" height="300">
+<img src="images/Screenshot_136.png" alt="app img" width="500" height="300">
+
+
 ## Features
 - Intuitive graphical user interface (GUI) implemented with Tkinter.
 - Sound effects and background music to enhance the gaming experience.

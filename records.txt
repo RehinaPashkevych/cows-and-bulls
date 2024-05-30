@@ -50,3 +50,5 @@ Username: ReginaRegina, Bulls: 1, Time: 0:00:24.566858, Date: 19.11.2023
 Username: ReginaRegina, Bulls: 1, Time: 0:00:16.720419, Date: 19.11.2023
 Username: ReginaRegina, Bulls: 0, Time: 0:00:23.503949, Date: 19.11.2023
 Username: ReginaRegina, Bulls: 0, Time: 0:00:13.746831, Date: 19.11.2023
+Username: ReginaRegina, Bulls: 3, Time: 0:00:44.282478, Date: 05.01.2024
+Username: rina, Bulls: 7, Time: 0:02:18.859119, Date: 30.05.2024
